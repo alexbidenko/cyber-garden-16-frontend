@@ -28,7 +28,15 @@ const LEVELS = [
 ];
 
 const saveUser = () => {
-  request.put('user/update_profile/', store.user).then(() => {
+  request.put('user/update_profile/', {
+    firstName: store.user.firstName,
+    lastName: store.user.lastName,
+    patronymic: store.user.patronymic,
+    grade: store.user.grade,
+    specialization: store.user.specialization,
+    email: store.user.email,
+    fact1: store.user.fact1,
+  } as Partial<UserType>).then(() => {
     store.toast.add({
       severity: 'success', summary: "Данные успешно обновлены", life: 3000,
     });

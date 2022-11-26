@@ -5,6 +5,7 @@ import {
 } from '#imports';
 import {useMainStore} from '~/store/main';
 import {UserType} from "~/types/base";
+import {requestConfig} from "~/utils/request";
 
 const route = useRoute();
 const store = useMainStore();
@@ -33,6 +34,7 @@ const submit = () => {
   isRequest.value = true;
   request.post<UserType & {token: string}>('user/obtain_token/', {login: email.value, password: password.value}).then(({token, ...user}) => {
     authorized.value = token;
+    requestConfig.authorized.value = token;
     store.setUser(user);
     router.push('/dashboard');
   }).catch(() => {

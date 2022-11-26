@@ -38,17 +38,17 @@ const refreshState = {
   subscribers: [] as { resolve: (v: unknown) => void, reject: (v: unknown) => void }[],
 };
 
-const config = {
+export const requestConfig = {
   authorized: {} as CookieRef<string>,
 };
 
 const initialOptions: FetchOptions = {
   onRequest(context) {
     console.log('onRequest');
-    if (config.authorized.value) {
+    if (requestConfig.authorized.value) {
       context.options.headers = {
         ...(context.options.headers || {}),
-        Authorization: `JWT ${config.authorized.value}`,
+        Authorization: `JWT ${requestConfig.authorized.value}`,
       }
     }
     if (!(context.options.body instanceof FormData)) context.options.body = caseTransfer(context.options.body, 'Snake');
@@ -72,7 +72,7 @@ export type ResponseErrorType = Error & FetchContext;
 
 export const initPlugin = (options: {baseURL: string}) => {
   initialOptions.baseURL = options.baseURL;
-  config.authorized = useCookie('authorized', {expires: new Date(2100, 1)});
+  requestConfig.authorized = useCookie('authorized', {expires: new Date(2100, 1)});
 };
 
 const request = <T>(url: string, options: FetchOptions): Promise<T> => (

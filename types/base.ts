@@ -1,6 +1,7 @@
 export type DepartmentType = {
   chief: UserType;
   chief_id: number;
+  headDepartment: number;
   chief_name: string;
   id: number;
   title: string;

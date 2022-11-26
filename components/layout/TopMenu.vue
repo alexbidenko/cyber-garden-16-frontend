@@ -25,7 +25,7 @@ const gameStore = useGameStore();
       </NuxtLink>
       <template v-else>
         <NuxtLink to="/dashboard/profile" class="block p-overlay-badge">
-          <Button class="p-button-help p-button-raised p-button-rounded p-1 pl-3">
+          <Button class="p-button-help p-button-raised p-button-rounded p-1 lg:pl-3">
             <span class="lg:block mr-2" style="display: none;">{{ combineFullName(store.user, true) }}</span>
             <UserAvatar :user="store.user" class="w-2rem h-2rem" style="border-radius: 50%" />
           </Button>

@@ -8,7 +8,7 @@ const {data: users} = await useAsyncData<UserType[]>('users', () => request.get(
 </script>
 
 <template>
-  <div class="usersPage p-6">
+  <div class="usersPage p-3 max-w-30rem mx-auto">
     <Card class="mb-4">
       <template #content>
         <SearchInput />

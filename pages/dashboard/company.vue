@@ -3,7 +3,7 @@ import {combineFullName, computed, ref, request, useAsyncData, useRouter} from "
 import {DepartmentType, UserType} from "~/types/base";
 import UserAvatar from "~/components/ui/UserAvatar.vue";
 
-const {data: departments} = useAsyncData<DepartmentType[]>('department', () => request.get('department/get_departments/', {params: {members: true}}));
+const {data: departments, pending} = useAsyncData<DepartmentType[]>('department', () => request.get('department/get_departments/', {params: {members: true}}));
 
 const router = useRouter();
 
@@ -12,7 +12,7 @@ const three = computed(() => ({
   data: {label: 'Oggetto'},
   selectable: false,
   styleClass: 'department-cfo',
-  children: departments.value?.map((el1) => ({
+  children: departments.value?.filter((f) => !f.headDepartment).map((el1) => ({
     key: `${el1.chief.uuid}_user`,
     type: 'person',
     styleClass: 'p-person',
@@ -28,6 +28,20 @@ const three = computed(() => ({
           type: 'person',
           styleClass: 'p-person',
           data: {label: el2.specialization, name: combineFullName(el2), avatar: el2.avatar, uuid: el2.uuid},
+          children: departments.value?.filter((f) => f.headDepartment && f.chief.uuid == el2.uuid).map((m) => (
+            {
+              key: `${m.id}_d`,
+              data: {label: m.title},
+              selectable: false,
+              styleClass: 'department-cfo',
+              children: m.members?.filter((m2) => m2.uuid !== m.chief.uuid).map((m2) => ({
+                key: `${m2.uuid}_user`,
+                type: 'person',
+                styleClass: 'p-person',
+                data: {label: m2.specialization, name: combineFullName(m2), avatar: m2.avatar, uuid: m2.uuid},
+              })),
+            }
+          )),
         })),
       }
     ],
@@ -55,6 +69,7 @@ const clickPerson = (node: {data: UserType}) => {
         </template>
       </OrganizationChart>
     </client-only>
+    <i v-if="pending" class="pi pi-spin pi-spinner absolute text-2xl text-black-alpha-90" style="top: 50%; left: 50%; transform: translate(-50%, -50%)" />
   </div>
 </template>
 
@@ -74,7 +89,7 @@ const clickPerson = (node: {data: UserType}) => {
   @media (max-width: 800px) {
     &__three {
       transform-origin: 0 50%;
-      transform: scale(0.5);
+      transform: scale(0.4);
     }
   }
 }

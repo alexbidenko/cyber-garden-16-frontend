@@ -36,7 +36,6 @@ watch(search, () => {
 <style lang="scss">
 .searchInput {
   height: 45px;
-  min-width: 45px;
   width: 45px;
   transition: min-width 0.3s ease;
   padding: 0.625rem 14px !important;
@@ -44,6 +43,7 @@ watch(search, () => {
   gap: 8px;
   cursor: text !important;
   flex: 0;
+  min-width: 100%;
 
   input {
     background: none;
@@ -52,10 +52,6 @@ watch(search, () => {
     width: 100%;
     color: #8dd0ff;
     font-size: 1.25rem;
-  }
-
-  &_active {
-    min-width: 280px;
   }
 }
 </style>

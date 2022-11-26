@@ -4,7 +4,7 @@ import {
   useRoute, useRouter, useState,
 } from '#imports';
 import {useMainStore} from '~/store/main';
-import {ResponseErrorType} from "~/utils/request";
+import {requestConfig, ResponseErrorType} from "~/utils/request";
 import {UserType} from "~/types/base";
 
 const route = useRoute();
@@ -43,6 +43,7 @@ const submit = () => {
   })
     .then(({ token, ...user }) => {
       authorized.value = token;
+      requestConfig.authorized.value = token;
       store.setUser(user);
       router.push('/dashboard');
     }).catch((e: ResponseErrorType) => {

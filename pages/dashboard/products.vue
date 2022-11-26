@@ -21,7 +21,7 @@ const select = (value: ProductType) => {
     accept: () => {
       store.balance -= value.price;
       request.post('store/buy/', {id: value.id}).then(() => {
-        toast.add({severity: 'success', summary: 'Поздравляем с покупкой!', detail: 'Найти товар можно в заказах'})
+        toast.add({severity: 'success', summary: 'Поздравляем с покупкой!', detail: 'Найти товар можно в заказах', life: 3000})
       });
     },
   });

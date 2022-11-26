@@ -193,7 +193,7 @@ onBeforeUnmount(() => {
           <Button icon="pi pi-thumbs-up" class="p-button-success interestsPage__simpleIcon p-button-lg" @click="onSuccess()" />
         </div>
       </template>
-      <p v-else class="mt-auto text-800 text-2xl md:text-3xl text-center">
+      <p v-else class="text-800 text-2xl md:text-3xl text-center text-black-alpha-90">
         Закончились сотрудники
       </p>
     </div>

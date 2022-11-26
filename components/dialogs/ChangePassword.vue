@@ -23,7 +23,7 @@ const resetDialog = () => {
 
 const saveNewPassword = () => {
   isRequest.value = true;
-  request.put('user/changePassword', {password: password.value, newPassword: newPassword.value}).then(() => {
+  request.put('user/change_password/', {oldPassword: password.value, newPassword: newPassword.value}).then(() => {
     resetDialog();
     toast.add({
       severity: 'success', summary: 'Пароль успешно обновлен', life: 3000,
