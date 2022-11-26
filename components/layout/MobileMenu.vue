@@ -15,8 +15,20 @@ const route = useRoute();
 
 const MOBILE_MENU: MainMenuItem[] = [
   {
+    label: 'О проекте',
+    to: '/',
+  },
+  {
+    label: 'Правила игр',
+    to: '/',
+  },
+  {
     label: 'Главная',
     to: '/dashboard',
+  },
+  {
+    label: 'Профиль',
+    to: '/dashboard/profile',
   },
   {divider: true},
   {
@@ -39,11 +51,11 @@ const MOBILE_MENU: MainMenuItem[] = [
     label: 'Поиск сотрудников',
     to: '/dashboard/users',
   },
-  // {divider: true},
-  // {
-  //   label: 'Администрирование',
-  //   to: '/dashboard/admin',
-  // },
+  {divider: true},
+  {
+    label: 'Потрать свои баллы',
+    to: '/dashboard/products',
+  },
 ];
 const isMoved = ref(false);
 const showMenu = ref(false);

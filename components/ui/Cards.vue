@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import {DepartmentType, WinCardType} from "~/types/base";
-import {computed, ref} from "#imports";
+import {computed, onMounted, onUnmounted, ref} from "#imports";
 import WinCard from "~/components/ui/WinCard.vue";
 
 type ItemType = DepartmentType & {collection: WinCardType[]};
@@ -23,6 +23,29 @@ const select = (data: ItemType, index: number) => {
     data,
   }
 };
+
+const screenWidth = ref(0);
+const activeCount = computed(() => {
+  if (screenWidth.value < 400) return 1;
+  if (screenWidth.value < 600) return 2;
+  if (screenWidth.value < 800) return 3;
+  if (screenWidth.value < 1100) return 4;
+  return 5;
+});
+
+const onResize = () => {
+  screenWidth.value = window.innerWidth;
+  console.log(activeCount.value);
+};
+
+onMounted(() => {
+  onResize();
+  window.addEventListener('resize', onResize);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('resize', onResize);
+});
 </script>
 
 <template>
@@ -31,7 +54,7 @@ const select = (data: ItemType, index: number) => {
       <Card v-for="(d, index) in list" :key="d.id" class="cardsPage__card hover:shadow-2 shadow-6 transition-all transition-duration-300" @click="select(d, index)">
         <template #content>
           {{ d.title }}
-          <div v-for="card in d.collection" :key="card.person.uuid" className="cardsPage__c">
+          <div v-for="card in d.collection" :key="card.person.uuid" class="cardsPage__c">
             <WinCard :index="index" :card="card" />
           </div>
         </template>
@@ -39,7 +62,7 @@ const select = (data: ItemType, index: number) => {
     </div>
 
     <Dialog :visible="!!activeGroup" @update:visible="activeGroup = undefined" style="width: 100%" @hide="activeGroup = undefined" :modal="true" :dismissableMask="true">
-      <Carousel :value="activeGroup?.data.collection" :numVisible="1" :numScroll="1">
+      <Carousel :value="activeGroup?.data.collection" :numVisible="activeCount" :numScroll="1">
         <template #item="slotProps">
           <div class="px-2">
             <WinCard :card="slotProps.data" :index="activeGroup?.index" />
@@ -90,6 +113,6 @@ const select = (data: ItemType, index: number) => {
 }
 
 .p-carousel-items-content {
-  padding: 6rem 0;
+  padding: 1rem 0;
 }
 </style>

@@ -24,7 +24,6 @@ const isRequest = ref(true);
 const questions = ref<UserType[]>([]);
 const index = ref(0);
 const direction = ref('');
-const answer = ref(0);
 
 const activeQuestion = computed(() => questions.value[index.value]);
 const cardRotating = computed(() => deltaPosition.value.x / 90);
@@ -186,24 +185,24 @@ onBeforeUnmount(() => {
 <template>
   <div
     ref="container"
-    class="interestsPage h-full"
-    :class="`interestsPage_${direction} interestsPage_${resultState}`"
+    class="swiperGame h-full"
+    :class="`swiperGame_${direction} swiperGame_${resultState}`"
   >
-    <div class="interestsPage__variants" v-if="variants?.length">
-      <div :class="{interestsPage__variant_active: directionLevels.isTop}">{{ variants[0]?.title }}</div>
-      <div :class="{interestsPage__variant_active: directionLevels.isRight}">{{ variants[1]?.title }}</div>
-      <div :class="{interestsPage__variant_active: directionLevels.isBottom}">{{ variants[2]?.title }}</div>
-      <div :class="{interestsPage__variant_active: directionLevels.isLeft}">{{ variants[3]?.title }}</div>
+    <div class="swiperGame__variants" v-if="variants?.length">
+      <div :class="{swiperGame__variant_active: directionLevels.isTop}">{{ variants[0]?.title }}</div>
+      <div :class="{swiperGame__variant_active: directionLevels.isRight}">{{ variants[1]?.title }}</div>
+      <div :class="{swiperGame__variant_active: directionLevels.isBottom}">{{ variants[2]?.title }}</div>
+      <div :class="{swiperGame__variant_active: directionLevels.isLeft}">{{ variants[3]?.title }}</div>
     </div>
 
-    <div class="interestsPage__content">
+    <div class="swiperGame__content">
       <template v-if="isRequest && !index" />
       <transition v-else-if="activeQuestion" mode="out-in" name="card">
         <Card
           ref="card"
           :key="activeQuestion.uuid"
-          class="interestsPage__card"
-          :class="{interestsPage__card_uncontrolled: !isMoved}"
+          class="swiperGame__card"
+          :class="{swiperGame__card_uncontrolled: !isMoved}"
           :style="cardStyle"
         >
           <template #content>
@@ -219,7 +218,7 @@ onBeforeUnmount(() => {
 </template>
 
 <style lang="scss">
-.interestsPage {
+.swiperGame {
   flex: 1;
   padding: 32px 10vw;
   overflow: hidden;
@@ -270,7 +269,8 @@ onBeforeUnmount(() => {
     background: #2a323dbb;
     width: 100%;
     border-radius: 24px;
-    min-height: 350px;
+    min-height: 280px;
+    max-width: 320px;
     display: flex;
     flex-direction: column;
     user-select: none;
@@ -300,8 +300,9 @@ onBeforeUnmount(() => {
   &__variants * {
     position: absolute;
     color: black;
-    font-size: 22px;
+    font-size: 18px;
     transition: color 0.3s ease;
+    text-align: center;
 
     &:nth-child(1) {
       top: 10%;

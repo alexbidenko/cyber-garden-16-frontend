@@ -55,7 +55,7 @@
           <div class="flex justify-content-between align-items-center dashboardPage__link">
             <img src="/icons/link-2.svg" />
             <span>
-          Потрать свои баллы
+              Потрать свои баллы
             </span>
             <img src="/icons/link-2.svg" />
           </div>

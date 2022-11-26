@@ -51,7 +51,7 @@ onUnmounted(() => {
   <transition name="fade">
     <Card class="finishGame" v-if="store.state !== 'none'">
       <template #content>
-        <div class="flex flex-column align-items-center justify-content-evenly">
+        <div class="flex flex-column gap-3 align-items-center justify-content-evenly">
           <img :src="image" />
           <Button class="p-button-lg p-button-success p-button-rounded" v-if="store.state === 'success'" @click="nextGame">{{ successText }}</Button>
           <Button class="p-button-lg p-button-help p-button-rounded" v-else-if="store.state === 'fail'" @click="repeatGame">{{ failText }}</Button>
@@ -66,7 +66,7 @@ onUnmounted(() => {
   position: absolute;
   padding: 0;
   z-index: 10;
-  height: 100%;
+  min-height: 100%;
   width: 100%;
   top: 0;
   left: 0;

@@ -73,6 +73,7 @@ onUnmounted(() => {
   text-align: center;
   border-radius: 8px;
   position: relative;
+  max-height: 500px;
 
   &__avatar {
     position: absolute;

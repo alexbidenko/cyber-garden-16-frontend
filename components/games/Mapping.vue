@@ -8,27 +8,28 @@ import {useGameStore} from "~/store/game";
 type FieldType = {
   uuid: string;
   userId: string;
+  key: number;
   value: string;
 }
 
 const store = useGameStore();
 
 const {data: users, error} = await useAsyncData<UserType[]>('users', () => requestUsers({
-  not_empty: ['firstName', 'lastName', 'patronymic', 'avatar'],
+  not_empty: ['firstName', 'lastName', 'patronymic', 'avatar', 'department'],
   order: 'random',
   introduced: 3,
   not_introduced: 3,
 }));
 
-const leftFields = ref<FieldType[]>(shuffle(users.value!.map((el) => ({ uuid: `left_${el.uuid}`, userId: el.uuid, value: combineFullName(el) }))));
-const rightFields = ref<FieldType[]>(shuffle(users.value!.map((el) => ({ uuid: `right_${el.uuid}`, userId: el.uuid, value: el.specialization }))));
+const leftFields = ref<FieldType[]>(shuffle(users.value!.map((el) => ({ uuid: `left_${el.uuid}`, userId: el.uuid, key: el.department.id, value: combineFullName(el) }))));
+const rightFields = ref<FieldType[]>(shuffle(users.value!.map((el) => ({ uuid: `right_${el.uuid}`, userId: el.uuid, key: el.department.id, value: el.specialization }))));
 
 const selectedField = ref<FieldType>();
 const errorFields = ref<[string, string]>();
 
 const selectField = (value: FieldType) => {
   if (selectedField.value) {
-    if (selectedField.value.userId === value.userId && selectedField.value?.uuid !== value.uuid) {
+    if (selectedField.value.key === value.key && selectedField.value?.uuid !== value.uuid) {
       selectedField.value = value;
       nextTick(() => {
         leftFields.value = leftFields.value?.filter((el) => el.userId !== value.userId) || null;
@@ -54,10 +55,10 @@ watch(leftFields, () => {
 </script>
 
 <template>
-  <div class="p-6 mappingGame">
-    <div class="flex gap-6 mx-auto w-fit">
+  <div class="p-3 md:p-6 mappingGame">
+    <div class="flex gap-4 md:gap-6 mx-auto w-fit">
       <client-only>
-        <div class="lightListTransition flex flex-column gap-6">
+        <div class="lightListTransition flex flex-column gap-3 md:gap-6">
           <transition-group name="light-list">
             <Card
               v-for="field in leftFields"
@@ -67,15 +68,15 @@ watch(leftFields, () => {
               :class="{mappingGame__card_error: errorFields?.includes(field.uuid), mappingGame__card_selected: selectedField?.uuid === field.uuid}"
             >
               <template #content>
-                <div class="flex gap-2 align-items-center">
-                  <UserAvatar class="w-3rem h-3rem" :user="users.find((el) => el.uuid === field.userId)" />
+                <div class="flex gap-2 align-items-center text-sm">
+                  <UserAvatar v-if="users" class="w-3rem h-3rem" :user="users.find((el) => el.uuid === field.userId)" />
                   {{ field.value }}
                 </div>
               </template>
             </Card>
           </transition-group>
         </div>
-        <div class="lightListTransition flex flex-column gap-6">
+        <div class="lightListTransition flex flex-column gap-3 md:gap-6">
           <transition-group name="light-list">
             <Card
               v-for="field in rightFields"
