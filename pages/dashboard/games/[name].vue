@@ -28,13 +28,15 @@ watch(() => store.state, () => {
       points: 10,
       gameType: route.params.name,
       tryCount: store.tryCount,
+    }).then(() => {
+      store.loadBalance();
     }).finally(() => {
       store.tryCount = 0;
     })
   }
   if (store.state === 'success' && Math.random() > 0.5) {
-    request.post('collection/spawn_playcard/').then((data) => {
-      console.log(data);
+    request.post('collection/spawn_playcard/').then(() => {
+      store.loadBalance();
     });
   }
 });

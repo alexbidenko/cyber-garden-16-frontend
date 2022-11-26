@@ -40,9 +40,9 @@ const clickPerson = (node: {data: UserType}) => {
 </script>
 
 <template>
-  <div class="companyPage py-8">
+  <div class="companyPage md:py-8">
     <client-only>
-      <OrganizationChart :value="three" class="company" @nodeSelect="clickPerson" selectionMode="single">
+      <OrganizationChart :value="three" class="companyPage__three" @nodeSelect="clickPerson" selectionMode="single">
         <template #person="slotProps">
           <div class="node-header ui-corner-top">{{slotProps.node.data.label}}</div>
           <div class="node-content">
@@ -69,6 +69,13 @@ const clickPerson = (node: {data: UserType}) => {
     height: 3rem;
     margin: 0.5rem 0;
     object-fit: cover;
+  }
+
+  @media (max-width: 800px) {
+    &__three {
+      transform-origin: 0 50%;
+      transform: scale(0.5);
+    }
   }
 }
 </style>
