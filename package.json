@@ -1,0 +1,27 @@
+{
+  "private": true,
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare"
+  },
+  "devDependencies": {
+    "@nuxt/image-edge": "^1.0.0-27821548.ab054e4",
+    "@types/md5": "^2.3.2",
+    "@types/uuid": "^8.3.4",
+    "nuxt": "3.0.0",
+    "sass": "^1.56.1",
+    "typescript": "^4.9.3"
+  },
+  "dependencies": {
+    "@pinia/nuxt": "^0.4.5",
+    "md5": "^2.3.0",
+    "pinia": "^2.0.26",
+    "primeflex": "^3.3.0",
+    "primeicons": "^6.0.1",
+    "primevue": "^3.20.0",
+    "uuid": "^9.0.0"
+  }
+}
