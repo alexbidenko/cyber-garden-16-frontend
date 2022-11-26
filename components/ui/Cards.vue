@@ -26,7 +26,7 @@ const select = (data: ItemType, index: number) => {
 </script>
 
 <template>
-  <div class="cardsPage p-4 sm:p-6 md:p-8">
+  <div class="cardsPage p-4 max-w-30rem mx-auto">
     <div class="flex flex-wrap cardsPage__list">
       <Card v-for="(d, index) in list" :key="d.id" class="cardsPage__card hover:shadow-2 shadow-6 transition-all transition-duration-300" @click="select(d, index)">
         <template #content>

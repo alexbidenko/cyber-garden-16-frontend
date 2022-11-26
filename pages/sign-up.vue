@@ -32,7 +32,7 @@ const authPath = computed(() => ({
     verifyEmail: route.query.verifyEmail,
   },
 }));
-const isValidName = computed(() => !!firstName.value && !!lastName.value && !!password.value);
+const isValidName = computed(() => !!firstName.value && !!lastName.value && !!patronymic.value);
 const isValidEmail = computed(() => /^(.+)@(.+)$/.test(email.value));
 const isValidPassword = computed(() => password.value.length >= 8);
 
@@ -82,8 +82,8 @@ const submit = () => {
                 class="p-inputtext-lg my-2 w-full"
                 :class="{'p-invalid': !isValidName}"
                 placeholder="Введите вашу фамилию"
-                name="name"
-                v-model="name"
+                name="family-name"
+                v-model="lastName"
                 autocomplete="family-name"
               />
             </label>
@@ -93,8 +93,8 @@ const submit = () => {
                 class="p-inputtext-lg my-2 w-full"
                 :class="{'p-invalid': !isValidName}"
                 placeholder="Введите ваше имя"
-                name="name"
-                v-model="name"
+                name="given-name"
+                v-model="firstName"
                 autocomplete="given-name"
               />
             </label>
@@ -104,8 +104,8 @@ const submit = () => {
                 class="p-inputtext-lg my-2 w-full"
                 :class="{'p-invalid': !isValidName}"
                 placeholder="Введите ваше отчество"
-                name="name"
-                v-model="name"
+                name="additional-name"
+                v-model="patronymic"
                 autocomplete="additional-name"
               />
             </label>

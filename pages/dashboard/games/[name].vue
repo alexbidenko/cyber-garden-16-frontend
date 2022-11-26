@@ -25,7 +25,7 @@ watch(() => store.state, () => {
   if (['fail', 'success'].includes(store.state)) {
     request.post('statistic/add_game_session/', {
       duration: new Date().getTime() - store.startTime,
-      points: 10,
+      points: store.state === 'success' ? 10 : 0,
       gameType: route.params.name,
       tryCount: store.tryCount,
     }).then(() => {

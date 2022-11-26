@@ -29,9 +29,9 @@ const select = (value: ProductType) => {
 </script>
 
 <template>
-  <div>
+  <div class="max-w-30rem mx-auto">
     <NuxtLink to="/dashboard/order">
-      <Button class="p-button-lg w-full my-3 justify-content-center">Заказы</Button>
+      <Button class="p-button-lg w-full my-3 justify-content-center p-button-help py-4">Заказы</Button>
     </NuxtLink>
     <DataView :value="products" layout="list">
       <template #list="slotProps">
@@ -151,7 +151,7 @@ const select = (value: ProductType) => {
   }
 }
 
-@media screen and (max-width: 900px) {
+@media screen and (max-width: 9000px) {
   .product-list-item {
     flex-direction: column;
     align-items: center;

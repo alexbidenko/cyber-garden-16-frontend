@@ -39,7 +39,7 @@ const saveUser = () => {
   });
 };
 
-const onBlur = (e: InputEvent, key: keyof Pick<UserType, 'firstName' | 'lastName' | 'patronymic' | 'email' | 'specialization'>) => {
+const onBlur = (e: InputEvent, key: keyof Pick<UserType, 'firstName' | 'lastName' | 'patronymic' | 'email' | 'specialization' | 'fact1'>) => {
   const newValue = (e.target as HTMLInputElement).value;
   if (newValue && newValue !== store.user[key]) {
     store.user[key] = newValue as any;
@@ -133,6 +133,18 @@ const selectAvatar = (event: InputEvent) => {
                     :value="store.user.email"
                   />
                 </label>
+              </div>
+            </template>
+          </Card>
+        </div>
+        <div class="col-12 md:col-6 p-2 md:px-3">
+          <Card class="w-full h-full">
+            <template #content>
+              <div class="flex flex-column gap-2 h-full">
+                <h3 class="text-800 text-xl mt-0 mb-3">
+                  Дополнительно
+                </h3>
+
                 <label class="block w-full">
                   Должность
                   <Input
@@ -159,23 +171,26 @@ const selectAvatar = (event: InputEvent) => {
 
                 <Divider />
 
+                <label class="block w-full">
+                  Интересный факт
+                  <Input
+                    @blur="onBlur($event, 'fact1')"
+                    placeholder="Введите факт о себе"
+                    class="w-full p-inputtext-lg my-2"
+                    name="specialization"
+                    autocomplete="off"
+                    :value="store.user.fact1"
+                  />
+                </label>
+
+                <Divider />
+
                 <Button
                   class="p-button-outlined justify-content-center"
                   @click="dialog = true"
                 >
                   Изменить пароль
                 </Button>
-              </div>
-            </template>
-          </Card>
-        </div>
-        <div class="col-12 md:col-6 p-2 md:px-3">
-          <Card class="w-full h-full">
-            <template #content>
-              <div class="flex flex-column gap-2 h-full">
-                <h3 class="text-800 text-xl mt-0 mb-3">
-                  Настройки
-                </h3>
 
                 <Divider />
 

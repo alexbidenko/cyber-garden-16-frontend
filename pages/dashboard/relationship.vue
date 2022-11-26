@@ -168,7 +168,7 @@ onBeforeUnmount(() => {
     class="interestsPage"
     :class="`interestsPage_${direction}`"
   >
-    <div class="interestsPage__content">
+    <div class="interestsPage__content max-w-30rem mx-auto" style="width: 100%">
       <template v-if="isRequest && !index" />
       <template v-else-if="activeQuestion">
         <transition mode="out-in" name="card">

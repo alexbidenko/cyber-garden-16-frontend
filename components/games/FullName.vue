@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import {combineFullName, computed, ref, request, requestUsers, shuffle, useAsyncData, useState, watch} from "#imports";
+import {combineFullName, computed, ref, requestUsers, shuffle, useAsyncData, useState, watch} from "#imports";
 import {UserType} from "~/types/base";
 import getRandomAndExclude from "~/utils/getRandomAndExclude";
 import UserAvatar from "~/components/ui/UserAvatar.vue";
@@ -9,13 +9,13 @@ import {useToast} from "primevue/usetoast";
 const toast = useToast();
 const store = useGameStore();
 
-const {data: usedUsers} = await useAsyncData<UserType[]>('users', () => requestUsers({
+const {data: usedUsers} = await useAsyncData<UserType[]>(`users_${store.key}`, () => requestUsers({
   not_empty: ['firstName', 'lastName', 'patronymic', 'avatar'],
   order: 'random',
   introduced: 3,
 }));
 
-const correctUser = useState('correctUser', () => ({} as UserType))
+const correctUser = useState(`correctUser_${store.key}`, () => ({} as UserType))
 getRandomAndExclude(usedUsers.value!, (item, list) => {
   correctUser.value = item;
   usedUsers.value = list;
@@ -30,7 +30,7 @@ const destructUserFields = (u: UserType) => [
   u.lastName,
   u.patronymic,
 ];
-const parameters = useState('parameters', () => shuffle([
+const parameters = useState(`parameters_${store.key}`, () => shuffle([
   ...destructUserFields(correctUser.value),
   ...usedUsers.value!.reduce((acc, el) => acc.concat(destructUserFields(el)), [] as string[])
 ]));
