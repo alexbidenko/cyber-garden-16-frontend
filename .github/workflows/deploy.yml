@@ -24,7 +24,7 @@ jobs:
 
       - name: Build and publish client
         run: |
-          docker build client --tag ghcr.io/alexbidenko1998/cyber-garden-16-frontend/client:latest
+          docker build . --tag ghcr.io/alexbidenko1998/cyber-garden-16-frontend/client:latest
           docker push ghcr.io/alexbidenko1998/cyber-garden-16-frontend/client:latest
 
   build-nginx:
