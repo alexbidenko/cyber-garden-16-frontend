@@ -5,10 +5,12 @@ import {
 import ChangePassword from '~/components/dialogs/ChangePassword.vue';
 import {useMainStore} from '~/store/main';
 import {UserType} from "~/types/base";
+import {ChangeEvent} from "rollup";
 
 const store = useMainStore();
 
 const dialog = ref(false);
+const inputFile = ref<HTMLInputElement>();
 
 const LEVELS = [
   {
@@ -49,10 +51,29 @@ const onSelectGrade = (e: {value: any}) => {
   store.user.grade = e.value;
   saveUser();
 };
+
+const selectAvatar = (event: InputEvent) => {
+  const target = event.target as HTMLInputElement;
+  const file = target.files?.[0];
+  if (file) {
+    const fd = new FormData();
+    fd.set('avatar', file);
+    request.put<UserType>('user/update_profile/', fd).then((data) => {
+      store.user.avatar = data.avatar;
+      store.toast.add({
+        severity: 'success', summary: "Данные успешно обновлены", life: 3000,
+      });
+    }).catch(() => {
+      store.toast.add({
+        severity: 'error', summary: "Во время обновления данных произошла ошибка", life: 3000,
+      });
+    });
+  }
+};
 </script>
 
 <template>
-  <main class="profilePage">
+  <div class="profilePage">
     <Head>
       <Title>Профиль пользователя</Title>
     </Head>
@@ -66,6 +87,11 @@ const onSelectGrade = (e: {value: any}) => {
                 <h2 class="text-800 text-xl mt-0 mb-3">
                   Редактирование профиля
                 </h2>
+                <div class="flex flex-column gap-3 mb-4">
+                  <img :src="store.user.avatar" class="h-8rem w-8rem block mx-auto profilePage__avatar" />
+                  <Button class="justify-content-center" @click="inputFile?.click()">Изменить</Button>
+                  <input type="file" class="none" ref="inputFile" @change="selectAvatar" accept="image/*" />
+                </div>
                 <label class="block w-full">
                   Имя
                   <Input
@@ -169,7 +195,7 @@ const onSelectGrade = (e: {value: any}) => {
     <ConfirmDialog />
 
     <ChangePassword v-model:visible="dialog" />
-  </main>
+  </div>
 </template>
 
 <style lang="scss">
@@ -177,6 +203,10 @@ const onSelectGrade = (e: {value: any}) => {
   display: flex;
   flex-direction: column;
   flex: 1;
+
+  &__avatar {
+    object-fit: cover;
+  }
 
   &__content {
     min-height: 80vh;

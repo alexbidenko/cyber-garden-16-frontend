@@ -18,11 +18,32 @@ const MOBILE_MENU: MainMenuItem[] = [
     label: 'Главная',
     to: '/dashboard',
   },
+  {divider: true},
   {
-    label: 'Компания',
+    label: 'Начать знакомство',
+    to: '/dashboard/games',
+  },
+  {
+    label: 'Моя коллекция',
+    to: '/dashboard/cards',
+  },
+  {
+    label: 'Отметить знакомых',
+    to: '/dashboard/relationship',
+  },
+  {
+    label: 'Карта компании',
     to: '/dashboard/company',
   },
-  {divider: true},
+  {
+    label: 'Поиск сотрудников',
+    to: '/dashboard/users',
+  },
+  // {divider: true},
+  // {
+  //   label: 'Администрирование',
+  //   to: '/dashboard/admin',
+  // },
 ];
 const isMoved = ref(false);
 const showMenu = ref(false);
@@ -101,7 +122,7 @@ onBeforeUnmount(() => {
 <template>
   <Button
     icon="pi pi-bars"
-    class="lg:none p-button-text"
+    class="p-button-text"
     @click="showMenu = !showMenu"
     aria-label="Открыть меню"
   />

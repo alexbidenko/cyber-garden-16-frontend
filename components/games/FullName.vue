@@ -1,25 +1,29 @@
 <script lang="ts" setup>
-import {combineFullName, ref, request, shuffle, useAsyncData, useState, watch} from "#imports";
+import {combineFullName, computed, ref, request, requestUsers, shuffle, useAsyncData, useState, watch} from "#imports";
 import {UserType} from "~/types/base";
 import getRandomAndExclude from "~/utils/getRandomAndExclude";
-import getRandomList from "~/utils/getRandomList";
 import UserAvatar from "~/components/ui/UserAvatar.vue";
 import {useGameStore} from "~/store/game";
+import {useToast} from "primevue/usetoast";
 
+const toast = useToast();
 const store = useGameStore();
 
-const {data: users} = await useAsyncData<UserType[]>('users', () => request.get('user/list_of_users/'));
+const {data: usedUsers} = await useAsyncData<UserType[]>('users', () => requestUsers({
+  not_empty: ['firstName', 'lastName', 'patronymic', 'avatar'],
+  order: 'random',
+  introduced: 3,
+}));
 
 const correctUser = useState('correctUser', () => ({} as UserType))
-getRandomAndExclude(users.value!, (item, list) => {
+getRandomAndExclude(usedUsers.value!, (item, list) => {
   correctUser.value = item;
-  users.value = list;
+  usedUsers.value = list;
 });
 
-const usedUsers = useState<UserType[]>('usedUsers', () => getRandomList(users.value!, 3));
+const answers = ref<string[]>([]);
 
-const answers = useState<string[]>('answers', () => []);
-const failCount = ref(0);
+const partList = computed(() => parameters.value.filter((el) => !answers.value.includes(el)))
 
 const destructUserFields = (u: UserType) => [
   u.firstName,
@@ -28,7 +32,7 @@ const destructUserFields = (u: UserType) => [
 ];
 const parameters = useState('parameters', () => shuffle([
   ...destructUserFields(correctUser.value),
-  ...usedUsers.value.reduce((acc, el) => acc.concat(destructUserFields(el)), [] as string[])
+  ...usedUsers.value!.reduce((acc, el) => acc.concat(destructUserFields(el)), [] as string[])
 ]));
 
 const selectPart = (part: string) => {
@@ -41,10 +45,12 @@ watch(answers, () => {
     store.state = 'success';
   } else if (answers.value.length >= 3) {
     answers.value = [];
-    failCount.value += 1;
+    store.tryCount += 1;
 
-    if (failCount.value >= 5) {
+    if (store.tryCount >= 5) {
       store.state = 'fail';
+    } else {
+      toast.add({severity: 'error', summary: 'Позор не знать своих коллег!', life: 3000})
     }
   }
 });
@@ -58,7 +64,7 @@ watch(answers, () => {
       <Chips :inputProps="{readonly: true}" class="w-full mb-6 block" v-model="answers" />
 
       <div class="flex gap-3 flex-wrap">
-        <Button v-for="part in parameters" :key="part" @click="selectPart(part)">
+        <Button v-for="part in partList" :key="part" @click="selectPart(part)" class="p-button-rounded">
           {{ part }}
         </Button>
       </div>

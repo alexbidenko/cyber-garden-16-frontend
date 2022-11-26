@@ -1,9 +1,7 @@
 <script lang="ts" setup>
-import {combineFullName, nextTick, ref, request, useAsyncData, useState, watch} from "#imports";
+import {combineFullName, nextTick, ref, requestUsers, useAsyncData, watch} from "#imports";
 import {UserType} from "~/types/base";
 import shuffle from "~/utils/shuffle";
-import getRandomList from "~/utils/getRandomList";
-import {useToast} from "primevue/usetoast";
 import UserAvatar from "~/components/ui/UserAvatar.vue";
 import {useGameStore} from "~/store/game";
 
@@ -14,13 +12,16 @@ type FieldType = {
 }
 
 const store = useGameStore();
-const toast = useToast();
 
-const {data: users} = await useAsyncData<UserType[]>('users', () => request.get('user/list_of_users/'));
-const usedUsers = useState<UserType[]>('usedUsers', () => getRandomList(users.value!, 2));
+const {data: users, error} = await useAsyncData<UserType[]>('users', () => requestUsers({
+  not_empty: ['firstName', 'lastName', 'patronymic', 'avatar'],
+  order: 'random',
+  introduced: 3,
+  not_introduced: 3,
+}));
 
-const leftFields = ref<FieldType[]>(shuffle(usedUsers.value.map((el) => ({ uuid: `left_${el.uuid}`, userId: el.uuid, value: combineFullName(el) }))));
-const rightFields = ref<FieldType[]>(shuffle(usedUsers.value!.map((el) => ({ uuid: `right_${el.uuid}`, userId: el.uuid, value: el.specialization }))));
+const leftFields = ref<FieldType[]>(shuffle(users.value!.map((el) => ({ uuid: `left_${el.uuid}`, userId: el.uuid, value: combineFullName(el) }))));
+const rightFields = ref<FieldType[]>(shuffle(users.value!.map((el) => ({ uuid: `right_${el.uuid}`, userId: el.uuid, value: el.specialization }))));
 
 const selectedField = ref<FieldType>();
 const errorFields = ref<[string, string]>();
@@ -67,7 +68,7 @@ watch(leftFields, () => {
             >
               <template #content>
                 <div class="flex gap-2 align-items-center">
-                  <UserAvatar class="w-3rem h-3rem" :user="usedUsers.find((el) => el.uuid === field.userId)" />
+                  <UserAvatar class="w-3rem h-3rem" :user="users.find((el) => el.uuid === field.userId)" />
                   {{ field.value }}
                 </div>
               </template>

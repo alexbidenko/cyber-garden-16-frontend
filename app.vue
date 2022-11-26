@@ -12,7 +12,7 @@ pinia.use(() => ({
   confirm: vueApp.config.globalProperties.$confirm,
 }));
 
-const authorized = useCookie('authorized');
+const authorized = useCookie('authorized', {expires: new Date(2100, 1)});
 const store = useMainStore();
 
 onMounted(() => {
@@ -47,6 +47,7 @@ onMounted(() => {
 
     <client-only>
       <Toast position="bottom-center" />
+      <ConfirmDialog />
     </client-only>
   </div>
 </template>

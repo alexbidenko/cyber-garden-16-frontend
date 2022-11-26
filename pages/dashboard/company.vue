@@ -1,146 +1,52 @@
 <script lang="ts" setup>
-import {ref} from "#imports";
-import {useToast} from "primevue/usetoast";
-const toast = useToast();
+import {combineFullName, computed, ref, request, useAsyncData, useRouter} from "#imports";
+import {DepartmentType, UserType} from "~/types/base";
+import UserAvatar from "~/components/ui/UserAvatar.vue";
 
-const data = ref({
-  key: '0',
-  type: 'person',
-  styleClass: 'p-person',
-  data: {label: 'CEO', name: 'Walter White', avatar: 'walter.jpg'},
-  children: [
-    {
-      key: '0_0',
-      type: 'person',
-      styleClass: 'p-person',
-      data: {label: 'CFO', name:'Saul Goodman', avatar: 'saul.jpg'},
-      children:[{
-        key: '0_0_0',
-        data: {label: 'Tax'},
+const {data: departments} = useAsyncData<DepartmentType[]>('department', () => request.get('department/get_departments/', {params: {members: true}}));
+
+const router = useRouter();
+
+const three = computed(() => ({
+  key: 'boss',
+  data: {label: 'Oggetto'},
+  selectable: false,
+  styleClass: 'department-cfo',
+  children: departments.value?.map((el1) => ({
+    key: `${el1.chief.uuid}_user`,
+    type: 'person',
+    styleClass: 'p-person',
+    data: {label: el1.chief.specialization, name: combineFullName(el1.chief), avatar: el1.chief.avatar, uuid: el1.chief.uuid},
+    children: [
+      {
+        key: `${el1.id}_d`,
+        data: {label: el1.title},
         selectable: false,
-        styleClass: 'department-cfo'
-      },
-        {
-          key: '0_0_1',
-          data: {label: 'Legal'},
-          selectable: false,
-          styleClass: 'department-cfo'
-        }],
-    },
-    {
-      key: '0_1',
-      type: 'person',
-      styleClass: 'p-person',
-      data: {label: 'COO', name:'Mike E.', avatar: 'mike.jpg'},
-      children:[{
-        key: '0_1_0',
-        data: {label: 'Operations'},
-        selectable: false,
-        styleClass: 'department-coo'
-      }]
-    },
-    {
-      key: '0_2',
-      type: 'person',
-      styleClass: 'p-person',
-      data: {label: 'CTO', name:'Jesse Pinkman', avatar: 'jesse.jpg'},
-      children:[{
-        key: '0_2_0',
-        data: {label: 'Development'},
-        selectable: false,
-        styleClass: 'department-cto',
-        children:[{
-          key: '0_2_0_0',
-          data: {label: 'Analysis'},
-          selectable: false,
-          styleClass: 'department-cto'
-        },
-          {
-            key: '0_2_0_1',
-            data: {label: 'Front End'},
-            selectable: false,
-            styleClass: 'department-cto'
-          },
-          {
-            key: '0_2_0_2',
-            data: {label: 'Back End'},
-            selectable: false,
-            styleClass: 'department-cto'
-          }]
-      },
-        {
-          key: '0_2_1',
-          data: {label: 'QA'},
-          selectable: false,
-          styleClass: 'department-cto'
-        },
-        {
-          key: '0_2_2',
-          data: {label: 'R&D'},
-          selectable: false,
-          styleClass: 'department-cto'
-        }]
-    }
-  ]
-});
-const data2 = ref({
-  key: '0',
-  data: {label: 'F.C. Barcelona'},
-  children: [
-    {
-      key: '0_0',
-      data: {label: 'F.C. Barcelona'},
-      children: [
-        {
-          key: '0_0_0',
-          data: {label: 'Chelsea F.C.'}
-        },
-        {
-          key: '0_0_1',
-          data: {label: 'F.C. Barcelona'}
-        }
-      ]
-    },
-    {
-      key: '0_1',
-      data: {label: 'Real Madrid'},
-      children: [
-        {
-          key: '0_1_0',
-          data: {label: 'Bayern Munich'}
-        },
-        {
-          key: '0_1_1',
-          data: {label: 'Real Madrid'}
-        }
-      ]
-    }
-  ]
-});
-const selection = ref({});
-const onNodeSelect = (node: any) => {
-  toast.add({severity:'success', summary: 'Node Selected', detail: node.data.label, life: 3000});
-};
-const onNodeUnselect = (node: any) => {
-  toast.add({severity:'success', summary: 'Node Unselected', detail: node.data.label, life: 3000});
-};
-const onNodeExpand = (node: any) => {
-  toast.add({severity:'success', summary: 'Node Expanded', detail: node.data.label, life: 3000});
-};
-const onNodeCollapse = (node: any) => {
-  toast.add({severity:'success', summary: 'Node Collapsed', detail: node.data.label, life: 3000});
+        styleClass: 'department-cfo',
+        children: el1.members?.filter((el2) => el2.uuid !== el1.chief.uuid).map((el2) => ({
+          key: `${el2.uuid}_user`,
+          type: 'person',
+          styleClass: 'p-person',
+          data: {label: el2.specialization, name: combineFullName(el2), avatar: el2.avatar, uuid: el2.uuid},
+        })),
+      }
+    ],
+  }))
+}));
+
+const clickPerson = (node: {data: UserType}) => {
+  router.push(`/dashboard/users/${node.data.uuid}`);
 };
 </script>
 
 <template>
-  <div class="companyPage">
+  <div class="companyPage py-8">
     <client-only>
-      <OrganizationChart :value="data" :collapsible="true" class="company" selectionMode="single" v-model:selectionKeys="selection"
-                         @nodeSelect="onNodeSelect" @nodeUnselect="onNodeUnselect" @nodeCollapse="onNodeCollapse" @nodeExpand="onNodeExpand">
+      <OrganizationChart :value="three" class="company" @nodeSelect="clickPerson" selectionMode="single">
         <template #person="slotProps">
           <div class="node-header ui-corner-top">{{slotProps.node.data.label}}</div>
           <div class="node-content">
-            <img src="https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png" width="32">
+            <UserAvatar :user="slotProps.node.data" class="companyPage__image" />
             <div>{{slotProps.node.data.name}}</div>
           </div>
         </template>
@@ -157,5 +63,12 @@ const onNodeCollapse = (node: any) => {
   height: 100%;
   width: 100%;
   overflow: auto;
+
+  &__image {
+    width: 3rem;
+    height: 3rem;
+    margin: 0.5rem 0;
+    object-fit: cover;
+  }
 }
 </style>

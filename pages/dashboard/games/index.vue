@@ -6,5 +6,11 @@
     <NuxtLink to="/dashboard/games/mapping">
       <Button>Выбери соответствия</Button>
     </NuxtLink>
+    <NuxtLink to="/dashboard/games/excluding">
+      <Button>Убрать лишнее</Button>
+    </NuxtLink>
+    <NuxtLink to="/dashboard/games/swiper">
+      <Button>Выбери правильное</Button>
+    </NuxtLink>
   </div>
 </template>

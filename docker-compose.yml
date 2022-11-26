@@ -1,0 +1,37 @@
+version: "3.8"
+
+services:
+  nginx:
+    image: ghcr.io/alexbidenko1998/cyber-garden-16-frontend/nginx:latest
+    expose:
+      - 80
+    networks:
+      - app
+      - server
+    deploy:
+      replicas: 1
+      update_config:
+        failure_action: rollback
+        order: start-first
+      restart_policy:
+        condition: on-failure
+
+  client:
+    image: ghcr.io/alexbidenko1998/cyber-garden-16-frontend/client:latest
+    environment:
+      HOST: "0.0.0.0"
+    networks:
+      - app
+    deploy:
+      replicas: 1
+      update_config:
+        failure_action: rollback
+        order: start-first
+      restart_policy:
+        condition: on-failure
+
+networks:
+  app:
+  server:
+    external:
+      name: server

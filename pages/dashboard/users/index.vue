@@ -8,23 +8,25 @@ const {data: users} = await useAsyncData<UserType[]>('users', () => request.get(
 </script>
 
 <template>
-  <div class="usersPage p-6 flex flex-column gap-3">
-    <Card>
+  <div class="usersPage p-6">
+    <Card class="mb-4">
       <template #content>
         <SearchInput />
       </template>
     </Card>
 
-    <NuxtLink v-for="user in users" :to="`/dashboard/users/${user.uuid}`" :key="user.uuid">
-      <Card class="hover:shadow-2 shadow-6 transition-all transition-duration-300">
-        <template #content>
-          <div class="flex gap-2 align-items-center">
-            <UserAvatar class="w-3rem h-3rem" :user="user" />
-            {{ combineFullName(user) }}
-          </div>
-        </template>
-      </Card>
-    </NuxtLink>
+    <div v-if="users" class="flex flex-column gap-3">
+      <NuxtLink v-for="user in users" :to="`/dashboard/users/${user.uuid}`" :key="user.uuid">
+        <Card class="hover:shadow-2 shadow-6 transition-all transition-duration-300">
+          <template #content>
+            <div class="flex gap-2 align-items-center">
+              <UserAvatar class="w-3rem h-3rem" :user="user" />
+              {{ combineFullName(user) }}
+            </div>
+          </template>
+        </Card>
+      </NuxtLink>
+    </div>
   </div>
 </template>
 

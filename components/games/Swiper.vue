@@ -1,10 +1,16 @@
 <script setup lang="ts">
+import Card from 'primevue/card';
 import {
   combineFullName,
-  computed, onBeforeUnmount, onMounted, ref, request, requestUsers, useState, watch,
+  computed, onBeforeUnmount, onMounted, ref, request, requestUsers, shuffle, useAsyncData, watch,
 } from '#imports';
-import {UserType} from "~/types/base";
+import {DepartmentType, UserType} from '~/types/base';
+import {useGameStore} from "~/store/game";
 import UserAvatar from "~/components/ui/UserAvatar.vue";
+
+const store = useGameStore();
+
+const {data: departments} = useAsyncData<DepartmentType[]>('department', () => request.get('department/get_departments/'));
 
 const container = ref<HTMLDivElement>();
 const card = ref<any>();
@@ -14,11 +20,11 @@ const deltaPosition = ref({x: 0, y: 0});
 const finishDeltaPosition = ref({x: '0px', y: '0px'});
 const cardTransformOrigin = ref({x: 0, y: 0});
 
-const isRequest = useState('isRequest', () => true);
+const isRequest = ref(true);
 const questions = ref<UserType[]>([]);
-const index = useState('index', () => 0);
-const direction = useState('direction', () => '');
-const answer = useState('answer', () => '');
+const index = ref(0);
+const direction = ref('');
+const answer = ref(0);
 
 const activeQuestion = computed(() => questions.value[index.value]);
 const cardRotating = computed(() => deltaPosition.value.x / 90);
@@ -30,63 +36,82 @@ const cardStyle = computed(() => {
 });
 const directionLevels = computed(() => {
   const absX = Math.abs(deltaPosition.value.x);
-  const isRight = deltaPosition.value.x > 0;
-  const isLeft = deltaPosition.value.x < 0;
+  const absY = Math.abs(deltaPosition.value.y);
+  const isTop = deltaPosition.value.y < 0 && absY >= absX;
+  const isRight = deltaPosition.value.x > 0 && absX >= absY;
+  const isBottom = deltaPosition.value.y > 0 && absY > absX;
+  const isLeft = deltaPosition.value.x < 0 && absX > absY;
 
   return {
+    isTop,
     isRight,
+    isBottom,
     isLeft,
+    top: isTop ? absY : 0,
     right: isRight ? absX : 0,
+    bottom: isBottom ? absY : 0,
     left: isLeft ? absX : 0,
   };
 });
-const helperStyle = computed(() => {
-  let color = 'transparent';
-  if (isMoved.value) {
-    if (directionLevels.value.isLeft) color = 'rgba(241,158,166,0.7)';
-    if (directionLevels.value.isRight) color = 'rgba(159,218,168,0.7)';
-  }
-  return {
-    'opacity': Math.min(0.3, Math.max(0, +Object.values(directionLevels.value).reduce((acc, el) => el > acc ? el : acc, 0) - 25) / 800),
-    'background-color': color,
-  };
-});
+const variants = computed(() => activeQuestion.value && shuffle([
+  activeQuestion.value.department,
+  ...shuffle(departments.value!.filter((el) => el.title !== activeQuestion.value.department.title)).slice(0, 3),
+]))
 
 const normalizePosition = (event: TouchEvent | MouseEvent) => {
   return 'touches' in event ? {x: event.touches[0].clientX, y: event.touches[0].clientY} : {x: event.clientX, y: event.clientY};
 };
 
-const loadQuestions = (excluded: string[] = []) => {
+const loadQuestions = () => {
   isRequest.value = true;
-  request.get('user/random_user/', {
-    params: {
-      limit_of_set: 10,
-      uuid_to_exclude: excluded.join(','),
-    },
+  requestUsers({
+    introduced: 3,
+    not_introduced: 3,
+    order: "random",
+    not_empty: ['firstName', 'lastName', 'patronymic', 'avatar', 'department']
   }).then((data) => {
-    questions.value = [...(excluded ? questions.value : []), ...data];
+    questions.value = data;
   }).finally(() => {
     isRequest.value = false;
   });
 };
 
-const onNext = () => {
+const resultState = ref<'none' | 'success' | 'fail'>('none');
+
+const onNext = (variant: DepartmentType) => {
+  if (variant.id === activeQuestion.value.department.id) resultState.value = 'success';
+  else {
+    store.tryCount++;
+    resultState.value = 'fail';
+  }
+  setTimeout(() => {
+    resultState.value = 'none';
+  }, 300);
+
   index.value += 1;
-  if (questions.value.length < index.value + 3) {
-    loadQuestions(questions.value.slice(index.value - 2).map((el) => el.uuid));
+  if (questions.value.length === index.value + 1) {
+    store.state = store.tryCount ? 'fail' : 'success';
   }
 };
 
-const onDiscard = () => {
-  answer.value = 'no';
+const onLeft = () => {
   direction.value = 'left';
-  onNext();
+  onNext(variants.value[3]);
 };
 
-const onSuccess = () => {
-  answer.value = 'yes';
+const onTop = () => {
+  direction.value = 'top';
+  onNext(variants.value[0]);
+};
+
+const onBottom = () => {
+  direction.value = 'bottom';
+  onNext(variants.value[2]);
+};
+
+const onRight = () => {
   direction.value = 'right';
-  onNext();
+  onNext(variants.value[1]);
 };
 
 const onTouchMove = (event: TouchEvent | MouseEvent) => {
@@ -108,8 +133,10 @@ const onTouchEnd = (event: TouchEvent | MouseEvent) => {
   let finishLevel = 120;
   if (window.innerWidth > 1000) finishLevel = 250;
   else if (window.innerWidth > 600) finishLevel = 200;
-  if (directionLevels.value.isRight && directionLevels.value.right > finishLevel) onSuccess();
-  else if (directionLevels.value.isLeft && directionLevels.value.left > finishLevel) onDiscard();
+  if (directionLevels.value.isTop && directionLevels.value.top > finishLevel) onTop();
+  else if (directionLevels.value.isBottom && directionLevels.value.bottom > finishLevel) onBottom();
+  else if (directionLevels.value.isRight && directionLevels.value.right > finishLevel) onRight();
+  else if (directionLevels.value.isLeft && directionLevels.value.left > finishLevel) onLeft();
   setTimeout(() => {
     finishDeltaPosition.value = {x: '0px', y: '0px'};
   }, 300);
@@ -139,12 +166,6 @@ const onTouchStart = (event: TouchEvent | MouseEvent) => {
   container.value!.addEventListener('mouseup', onTouchEnd);
 };
 
-watch(index, (_, p) => {
-  request.post('user/introduce_users/', {
-    user_id: questions.value[p].uuid, status: answer.value === 'yes',
-  });
-});
-
 watch(card, (value) => {
   if (value) {
     card.value.$el.addEventListener('touchstart', onTouchStart);
@@ -165,51 +186,33 @@ onBeforeUnmount(() => {
 <template>
   <div
     ref="container"
-    class="interestsPage"
-    :class="`interestsPage_${direction}`"
+    class="interestsPage h-full"
+    :class="`interestsPage_${direction} interestsPage_${resultState}`"
   >
-    <div class="interestsPage__content">
-      <template v-if="isRequest && !index" />
-      <template v-else-if="activeQuestion">
-        <transition mode="out-in" name="card">
-          <Card
-            ref="card"
-            :key="activeQuestion.uuid"
-            class="interestsPage__card"
-            :class="{interestsPage__card_uncontrolled: !isMoved}"
-            :style="cardStyle"
-          >
-            <template #content>
-              <UserAvatar :user="activeQuestion" class="mx-auto block w-8rem h-8rem" />
-              <p class="text-3xl m-0 text-center pt-4 select-none">
-                {{ combineFullName(activeQuestion) }}
-              </p>
-            </template>
-          </Card>
-        </transition>
-
-        <div class="interestsPage__buttons mb-5">
-          <Button icon="pi pi-thumbs-down" class="p-button-danger interestsPage__simpleIcon p-button-lg" @click="onDiscard()" />
-          <Button icon="pi pi-thumbs-up" class="p-button-success interestsPage__simpleIcon p-button-lg" @click="onSuccess()" />
-        </div>
-      </template>
-      <p v-else class="mt-auto text-800 text-2xl md:text-3xl text-center">
-        Закончились сотрудники
-      </p>
+    <div class="interestsPage__variants" v-if="variants?.length">
+      <div :class="{interestsPage__variant_active: directionLevels.isTop}">{{ variants[0]?.title }}</div>
+      <div :class="{interestsPage__variant_active: directionLevels.isRight}">{{ variants[1]?.title }}</div>
+      <div :class="{interestsPage__variant_active: directionLevels.isBottom}">{{ variants[2]?.title }}</div>
+      <div :class="{interestsPage__variant_active: directionLevels.isLeft}">{{ variants[3]?.title }}</div>
     </div>
 
-    <div
-      class="interestsPage__helper"
-      :class="{interestsPage__helper_uncontrolled: !isMoved}"
-      :style="helperStyle"
-    >
-      <transition name="icon" mode="out-in">
-        <div v-if="directionLevels.isLeft" class="p-button-danger interestsPage__simpleIcon">
-          <i class="pi pi-thumbs-down" />
-        </div>
-        <div v-else-if="directionLevels.isRight" class="p-button-success interestsPage__simpleIcon">
-          <i class="pi pi-thumbs-up" />
-        </div>
+    <div class="interestsPage__content">
+      <template v-if="isRequest && !index" />
+      <transition v-else-if="activeQuestion" mode="out-in" name="card">
+        <Card
+          ref="card"
+          :key="activeQuestion.uuid"
+          class="interestsPage__card"
+          :class="{interestsPage__card_uncontrolled: !isMoved}"
+          :style="cardStyle"
+        >
+          <template #content>
+            <UserAvatar :user="activeQuestion" class="mx-auto block w-8rem h-8rem" />
+            <p class="text-3xl m-0 text-center pt-4 select-none">
+              {{ combineFullName(activeQuestion) }}
+            </p>
+          </template>
+        </Card>
       </transition>
     </div>
   </div>
@@ -218,11 +221,11 @@ onBeforeUnmount(() => {
 <style lang="scss">
 .interestsPage {
   flex: 1;
-  padding: calc(32px + var(--header-height)) 10vw 32px;
+  padding: 32px 10vw;
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  height: calc(100vh - var(--header-height));
+  transition: box-shadow 0.3s ease;
 
   @media (max-width: 640px) {
     padding: calc(32px + var(--header-height)) 16px 32px;
@@ -234,6 +237,14 @@ onBeforeUnmount(() => {
         padding: 1rem;
       }
     }
+  }
+
+  &_success {
+    box-shadow: inset 0 0 61px 31px rgba(66, 255, 0, 0.45);
+  }
+
+  &_fail {
+    box-shadow: inset 0 0 61px 31px rgba(255, 0, 0, 0.45);
   }
 
   &__background {
@@ -284,6 +295,45 @@ onBeforeUnmount(() => {
 
   &__simpleIcon .pi {
     font-size: 1.8rem;
+  }
+
+  &__variants * {
+    position: absolute;
+    color: black;
+    font-size: 22px;
+    transition: color 0.3s ease;
+
+    &:nth-child(1) {
+      top: 10%;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    &:nth-child(2) {
+      top: 25%;
+      right: 16px;
+      transform: rotate(20deg);
+      transform-origin: 100% 50%;
+    }
+
+    &:nth-child(3) {
+      bottom: 10%;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    &:nth-child(4) {
+      top: 25%;
+      left: 16px;
+      transform: rotate(-20deg);
+      transform-origin: 0 50%;
+    }
+  }
+
+  &__variant {
+    &_active {
+      color: blue;
+    }
   }
 
   &__doubleIcon {

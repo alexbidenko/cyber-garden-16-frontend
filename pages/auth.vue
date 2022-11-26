@@ -10,7 +10,7 @@ const route = useRoute();
 const store = useMainStore();
 const router = useRouter();
 
-const authorized = useCookie('authorized');
+const authorized = useCookie('authorized', {expires: new Date(2100, 1)});
 
 if (authorized.value) await navigateTo('/', {redirectCode: 302});
 

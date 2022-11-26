@@ -1,6 +1,8 @@
 import {FetchOptions, FetchContext} from "ofetch";
 import {useCookie} from "#build/imports";
 import dns from 'node:dns';
+import {Ref} from "@vue/reactivity";
+import {CookieRef} from "#app";
 
 if (process.env.NODE_ENV === 'development' && process.server) {
   dns.setDefaultResultOrder('ipv4first');
@@ -36,14 +38,17 @@ const refreshState = {
   subscribers: [] as { resolve: (v: unknown) => void, reject: (v: unknown) => void }[],
 };
 
+const config = {
+  authorized: {} as CookieRef<string>,
+};
+
 const initialOptions: FetchOptions = {
   onRequest(context) {
-    const authorized = useCookie('authorized');
     console.log('onRequest');
-    if (authorized.value) {
+    if (config.authorized.value) {
       context.options.headers = {
         ...(context.options.headers || {}),
-        Authorization: `JWT ${authorized.value}`,
+        Authorization: `JWT ${config.authorized.value}`,
       }
     }
     if (!(context.options.body instanceof FormData)) context.options.body = caseTransfer(context.options.body, 'Snake');
@@ -56,7 +61,7 @@ const initialOptions: FetchOptions = {
     context.response._data = caseTransfer(context.response._data, 'Camel');
   },
   onResponseError(context) {
-    console.log('onResponseError');
+    console.log('onResponseError', context.response);
     const error = new Error(context.response.statusText);
     Object.assign(error, context);
     throw error;
@@ -67,6 +72,7 @@ export type ResponseErrorType = Error & FetchContext;
 
 export const initPlugin = (options: {baseURL: string}) => {
   initialOptions.baseURL = options.baseURL;
+  config.authorized = useCookie('authorized', {expires: new Date(2100, 1)});
 };
 
 const request = <T>(url: string, options: FetchOptions): Promise<T> => (

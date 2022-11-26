@@ -13,8 +13,8 @@ const randomParameter = ref(0);
 const image = computed(() => `/game-finishes/${store.state}-${randomParameter.value + 1}.png`);
 const successText = computed(() => [
   'Поехали дальше!',
+  'Я как Ник Фьюри!',
   'Ладно, за работу!',
-  'Я как Ник Фьюри!'
 ][randomParameter.value]);
 const failText = computed(() => [
   'Попробую ещё раз.',
@@ -65,7 +65,7 @@ onUnmounted(() => {
 .finishGame {
   position: absolute;
   padding: 0;
-  z-index: 1;
+  z-index: 10;
   height: 100%;
   width: 100%;
   top: 0;

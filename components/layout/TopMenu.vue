@@ -1,55 +1,19 @@
 <script setup lang="ts">
-import {
-  computed,
-} from '#imports';
 import {useMainStore} from '~/store/main';
 import MobileMenu from "~/components/layout/MobileMenu.vue";
-
-type MainMenuItem = {
-  label?: string;
-  divider?: boolean;
-  to?: string;
-  click?: (event: MouseEvent) => void;
-  icon?: string;
-}
+import {useGameStore} from "~/store/game";
 
 const store = useMainStore();
-
-const DESKTOP_MENU: MainMenuItem[] = [
-  {
-    label: 'Главная',
-    to: '/dashboard',
-  },
-  {
-    label: 'Компания',
-    to: '/dashboard/company',
-  },
-];
-
-const desktopMenuItems = computed(() => DESKTOP_MENU);
+const gameStore = useGameStore();
 </script>
 
 <template>
   <header
     class="topMenu shadow-4 flex align-items-center px-3 md:px-4"
   >
-    <div class="align-items-center none lg:flex xl:gap-2">
-      <NuxtLink
-        v-for="item in desktopMenuItems"
-        :key="item.label"
-        :to="item.to"
-        class="block"
-      >
-        <Button
-          class="p-button-text px-2 xl:px-3"
-          :label="item.label"
-          :icon="item.icon"
-          icon-pos="right"
-        />
-      </NuxtLink>
-    </div>
     <MobileMenu />
     <div class="ml-auto flex align-items-center gap-2">
+      <Chip :label="gameStore.balance.toString()" image="/icons/coin.svg" />
       <NuxtLink to="/auth" class="block" v-if="!store.isAuthorized">
         <Button class="p-button-text px-2 sm:px-3">
           Войти
@@ -74,7 +38,7 @@ const desktopMenuItems = computed(() => DESKTOP_MENU);
   top: 0;
   left: 0;
   width: 100%;
-  z-index: 10;
+  z-index: 20;
   background-color: #2a323deb !important;
 
   &_admin {
