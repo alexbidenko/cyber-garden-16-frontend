@@ -68,6 +68,6 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Deploy 🚀
-        run: docker stack deploy --prune --with-registry-auth -c docker-compose.yml asmy-site
+        run: docker stack deploy --prune --with-registry-auth -c docker-compose.yml cyber-garden-16-frontend
         env:
           DOCKER_HOST: ssh://${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}
