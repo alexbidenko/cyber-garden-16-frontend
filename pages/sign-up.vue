@@ -15,7 +15,9 @@ const authorized = useCookie('authorized', {expires: new Date(2100, 1)});
 
 if (authorized.value) await navigateTo('/', {redirectCode: 302});
 
-const name = useState('name', () => '');
+const firstName = useState('firstName', () => '');
+const lastName = useState('lastName', () => '');
+const patronymic = useState('patronymic', () => '');
 const email = useState('email', () => '');
 const password = useState('password', () => '');
 const isRequest = useState('isRequest', () => false);
@@ -30,14 +32,14 @@ const authPath = computed(() => ({
     verifyEmail: route.query.verifyEmail,
   },
 }));
-const isValidName = computed(() => !!name.value);
+const isValidName = computed(() => !!firstName.value && !!lastName.value && !!password.value);
 const isValidEmail = computed(() => /^(.+)@(.+)$/.test(email.value));
 const isValidPassword = computed(() => password.value.length >= 8);
 
 const submit = () => {
   isRequest.value = true;
   request.post<UserType & { token: string }>('user/create_user/', {
-    name: name.value, email: email.value, password: password.value,
+    firstName: firstName.value, lastName: lastName.value, patronymic: patronymic.value, email: email.value, password: password.value,
   })
     .then(({ token, ...user }) => {
       authorized.value = token;
@@ -68,12 +70,23 @@ const submit = () => {
     <Card class="w-full signUpPage__card">
       <template #title>
         <h1 class="text-2xl">
-          Войти в аккаунт
+          Создать аккаунт
         </h1>
       </template>
       <template #content>
         <form @submit.prevent="submit">
           <div class="flex flex-column gap-2">
+            <label class="block w-full">
+              Фамилия
+              <Input
+                class="p-inputtext-lg my-2 w-full"
+                :class="{'p-invalid': !isValidName}"
+                placeholder="Введите вашу фамилию"
+                name="name"
+                v-model="name"
+                autocomplete="family-name"
+              />
+            </label>
             <label class="block w-full">
               Имя
               <Input
@@ -83,6 +96,17 @@ const submit = () => {
                 name="name"
                 v-model="name"
                 autocomplete="given-name"
+              />
+            </label>
+            <label class="block w-full">
+              Отчество
+              <Input
+                class="p-inputtext-lg my-2 w-full"
+                :class="{'p-invalid': !isValidName}"
+                placeholder="Введите ваше отчество"
+                name="name"
+                v-model="name"
+                autocomplete="additional-name"
               />
             </label>
             <label class="block w-full">

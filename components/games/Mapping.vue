@@ -28,7 +28,7 @@ const errorFields = ref<[string, string]>();
 
 const selectField = (value: FieldType) => {
   if (selectedField.value) {
-    if (selectedField.value.userId === value.userId) {
+    if (selectedField.value.userId === value.userId && selectedField.value?.uuid !== value.uuid) {
       selectedField.value = value;
       nextTick(() => {
         leftFields.value = leftFields.value?.filter((el) => el.userId !== value.userId) || null;

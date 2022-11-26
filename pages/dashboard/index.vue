@@ -1,5 +1,5 @@
 <template>
-  <div class="dashboardPage py-4 px-3 md:p-6 flex flex-column gap-4">
+  <div class="dashboardPage py-4 px-3 flex flex-column gap-4 max-w-30rem mx-auto">
     <div class="flex flex-wrap dashboardPage__grid">
       <NuxtLink to="/dashboard/games" class="dashboardPage__gridItem">
         <Card class="hover:shadow-2 shadow-6 transition-all transition-duration-300 dashboardPage__gridCard">
