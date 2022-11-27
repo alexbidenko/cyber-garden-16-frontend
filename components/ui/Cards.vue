@@ -51,7 +51,7 @@ const onResize = () => {
 const onBarter = (card: WinCardType) => {
   confirm.require({
     header: "Подтверждение обмена",
-    message: 'Вы уверены, что хотите обменять товар?',
+    message: 'Вы уверены, что хотите обменять карточку?',
     icon: 'pi pi-shopping-cart',
     acceptLabel: 'Да',
     rejectLabel: 'Нет',
