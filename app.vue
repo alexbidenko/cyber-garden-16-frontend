@@ -44,6 +44,10 @@ onMounted(() => {
       <Link rel="manifest" href="/site.webmanifest" />
       <Meta name="msapplication-TileColor" content="#da532c" />
       <Meta name="theme-color" content="#ffffff" />
+      <Meta property="og:image" content="https://simpler.admire.social/og.png" />
+      <Meta property="og:image:width" content="1200" />
+      <Meta property="og:image:height" content="630" />
+      <Meta property="og:type" content="website" />
     </Head>
 
     <TopMenu />
