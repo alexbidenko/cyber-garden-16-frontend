@@ -1,3 +1,38 @@
+<script lang="ts" setup>
+import {computed, onMounted, ref} from "#imports";
+
+const deferredPrompt = ref<any>();
+const notAvailable = ref(true);
+
+const dialog = ref(false);
+const isPWA = computed(() => {
+  if (process.server) return false;
+  // @ts-ignore
+  return navigator.standalone || window.matchMedia('(display-mode: standalone)').matches;
+});
+
+const onClick = async () => {
+  if (deferredPrompt.value) {
+    try {
+      deferredPrompt.value.prompt();
+      const {outcome} = await deferredPrompt.value.userChoice;
+      if (outcome === 'accepted') {
+        deferredPrompt.value = null;
+      }
+    } catch {
+      deferredPrompt.value = null;
+    }
+  } else dialog.value = true;
+};
+
+onMounted(() => {
+  window.addEventListener('beforeinstallprompt', (e) => {
+    deferredPrompt.value = e;
+    notAvailable.value = !e;
+  });
+});
+</script>
+
 <template>
   <div class="dashboardPage py-4 px-3 flex flex-column gap-4 max-w-30rem mx-auto">
     <div class="flex flex-wrap dashboardPage__grid">
@@ -12,7 +47,7 @@
       <NuxtLink to="/dashboard/cards" class="dashboardPage__gridItem">
         <Card class="hover:shadow-2 shadow-6 transition-all transition-duration-300 dashboardPage__gridCard">
           <template #content>
-            <img class="dashboardPage__gridIcon" src="/icons/dashboard-icon-2.png" />
+            <img class="dashboardPage__gridIcon" src="/icons/games-icon-6.svg" />
             Моя коллекция
           </template>
         </Card>
@@ -76,13 +111,25 @@
         </template>
       </Card>
     </NuxtLink>
-<!--    <NuxtLink to="/dashboard/admin">-->
-<!--      <Card class="hover:shadow-2 shadow-6 transition-all transition-duration-300">-->
-<!--        <template #content>-->
-<!--          Администрирование-->
-<!--        </template>-->
-<!--      </Card>-->
-<!--    </NuxtLink>-->
+
+    <Card class="dashboardPage__linkCard dashboardPage__linkCard_5 hover:shadow-2 shadow-6 transition-all transition-duration-300 cursor-pointer" @click="onClick" v-if="!isPWA">
+      <template #content>
+        <div class="flex justify-content-between align-items-center dashboardPage__link">
+          <img src="/icons/d-i.svg" />
+          <span>
+            Скачать приложение
+          </span>
+          <img src="/icons/d-i.svg" />
+        </div>
+      </template>
+    </Card>
+
+    <Dialog v-model:visible="dialog" header="Установка приложения" modal style="width: 420px">
+      <p class="text-lg line-height-3 my-1">
+        Сайт реализован как PWA и подразумевает установку через браузер.
+        Если вы видите это окно, значит у вас не работает автоматическая установка, однако вы можете сделать это сами через настройки браузера.
+      </p>
+    </Dialog>
   </div>
 </template>
 
@@ -109,6 +156,10 @@
 
     &_3 {
       background-color: #FFD24B;
+    }
+
+    &_5 {
+      background-color: #7FD8E6;
     }
   }
 

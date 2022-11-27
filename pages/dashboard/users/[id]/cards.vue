@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import {request, useAsyncData, useRoute} from "#imports";
-import {DepartmentType} from "~/types/base";
+import {DepartmentType, WinCardType} from "~/types/base";
 import Cards from '~/components/ui/Cards.vue';
 import {useGameStore} from "~/store/game";
 
@@ -11,8 +11,8 @@ const userUuid = route.params.id;
 
 const [{data: departments}, {data: cards}, {data: myCollection}] = await Promise.all([
   useAsyncData<DepartmentType[]>('department', () => request.get('department/get_departments/')),
-  useAsyncData<DepartmentType[]>(`cards_${userUuid}`, () => request.get(`collection/user_play_cards/${userUuid}`)),
-  useAsyncData<DepartmentType[]>('cards', () => request.get('collection/play_cards/')),
+  useAsyncData<WinCardType[]>(`cards_${userUuid}`, () => request.get(`collection/user_play_cards/${userUuid}`)),
+  useAsyncData<WinCardType[]>('cards', () => request.get('collection/play_cards/')),
 ]);
 </script>
 

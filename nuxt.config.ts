@@ -10,5 +10,20 @@ export default defineNuxtConfig({
   modules: [
     '@pinia/nuxt',
     '@nuxt/image-edge',
+    '@kevinmarrec/nuxt-pwa'
   ],
+  pwa: {
+    workbox: {
+      enabled: true,
+      templatePath: '~/scripts/sw.js',
+    },
+    manifest: {
+      name: 'Admire Simpler',
+      short_name: 'Admire Simpler',
+      lang: "ru",
+      theme_color: '#20262e',
+      background_color: '#20262e',
+      start_url: '/dashboard',
+    },
+  },
 })

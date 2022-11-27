@@ -83,6 +83,8 @@ onUnmounted(() => {
           <div v-for="card in d.collection" :key="card.person.uuid" class="cardsPage__c">
             <WinCard :index="index" :card="card" />
           </div>
+
+          <div class="cardsPage__full">FULL</div>
         </template>
       </Card>
     </div>
@@ -105,6 +107,18 @@ onUnmounted(() => {
 .cardsPage {
   &__list {
     gap: 24px;
+  }
+
+  &__full {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    transform: rotate(45deg) translate(-23%, -50%);
+    border: 1px solid black;
+    color: black;
+    z-index: 2;
+    padding: 1px 3px;
+    transform-origin: 50% 50%;
   }
 
   &__card {
