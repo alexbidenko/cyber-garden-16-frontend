@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import {combineFullName, computed, ref, requestUsers, shuffle, useAsyncData, useState, watch} from "#imports";
 import {UserType} from "~/types/base";
-import getRandomAndExclude from "~/utils/getRandomAndExclude";
 import UserAvatar from "~/components/ui/UserAvatar.vue";
 import {useGameStore} from "~/store/game";
 import {useToast} from "primevue/usetoast";
@@ -15,15 +14,10 @@ const {data: usedUsers} = await useAsyncData<UserType[]>(`users_${store.key}`, (
   introduced: 3,
 }));
 
-const correctUser = useState(`correctUser_${store.key}`, () => ({} as UserType))
-getRandomAndExclude(usedUsers.value!, (item, list) => {
-  correctUser.value = item;
-  usedUsers.value = list;
-});
+const correctUser = useState(`correctUser_${store.key}`, () => usedUsers.value![Math.floor(Math.random() * usedUsers.value!.length)])
+usedUsers.value = usedUsers.value!.filter((f) => f.uuid !== correctUser.value.uuid);
 
 const answers = ref<string[]>([]);
-
-const partList = computed(() => parameters.value.filter((el) => !answers.value.includes(el)))
 
 const destructUserFields = (u: UserType) => [
   u.firstName,
@@ -34,6 +28,8 @@ const parameters = useState(`parameters_${store.key}`, () => shuffle([
   ...destructUserFields(correctUser.value),
   ...usedUsers.value!.reduce((acc, el) => acc.concat(destructUserFields(el)), [] as string[])
 ]));
+
+const partList = computed(() => parameters.value.filter((el) => !answers.value.includes(el)))
 
 const selectPart = (part: string) => {
   if (answers.value.includes(part)) answers.value = answers.value.filter((el) => el !== part);
