@@ -14,6 +14,7 @@ const gameStore = useGameStore();
     class="topMenu shadow-4 flex align-items-center px-3 md:px-4"
   >
     <MobileMenu />
+    <img src="/small-logo.svg" class="h-3rem ml-3" />
     <div class="ml-auto flex align-items-center gap-2">
       <NuxtLink to="/dashboard/products" class="block h-full">
         <Chip :label="gameStore.balance.toString()" image="/icons/coin.svg" class="h-full p-1 pl-4 pr-3" style="border-radius: 20px" />

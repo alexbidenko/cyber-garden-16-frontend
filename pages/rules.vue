@@ -1,7 +1,7 @@
 <template>
   <div class="rulesPage">
     <div class="rulesPage__container">
-      <img src="/pages/rules.jpg" class="rulesPage__image" />
+      <img src="/pages/rules-2.jpg" class="rulesPage__image" />
       <NuxtLink to="/dashboard/games/mapping" class="rulesPage__button rulesPage__button_1">
         <Button class="p-button-lg p-button-rounded rulesPage__button_c px-5">Играть</Button>
       </NuxtLink>
