@@ -72,6 +72,11 @@ onMounted(() => {
 onUnmounted(() => {
   window.removeEventListener('resize', onResize);
 });
+
+const searchCollectionCount = (cc: WinCardType[]) => {
+  const set = new Set(cc.map((el) => el.person.uuid));
+  return set.size;
+};
 </script>
 
 <template>
@@ -84,7 +89,7 @@ onUnmounted(() => {
             <WinCard :index="index" :card="card" />
           </div>
 
-          <div class="cardsPage__full">FULL</div>
+          <div v-if="d.memberCount <= searchCollectionCount(d.collection)" class="cardsPage__full">FULL</div>
         </template>
       </Card>
     </div>

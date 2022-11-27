@@ -13,7 +13,7 @@ const router = useRouter();
 
 const authorized = useCookie('authorized', {expires: new Date(2100, 1)});
 
-if (authorized.value) await navigateTo('/', {redirectCode: 302});
+if (authorized.value) await navigateTo('/dashboard', {redirectCode: 302});
 
 const firstName = useState('firstName', () => '');
 const lastName = useState('lastName', () => '');

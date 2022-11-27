@@ -5,6 +5,7 @@ export type DepartmentType = {
   chief_name: string;
   id: number;
   title: string;
+  memberCount: number;
   members: UserType[];
 }
 

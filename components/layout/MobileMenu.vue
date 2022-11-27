@@ -32,6 +32,10 @@ const MOBILE_MENU: MainMenuItem[] = [
   },
   {divider: true},
   {
+    label: 'Правила игр',
+    to: '/rules',
+  },
+  {
     label: 'Начать знакомство',
     to: '/dashboard/games',
   },
