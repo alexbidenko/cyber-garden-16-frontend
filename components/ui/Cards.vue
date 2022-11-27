@@ -6,7 +6,7 @@ import {useGameStore} from "~/store/game";
 import {useConfirm} from "primevue/useconfirm";
 import {useToast} from "primevue/usetoast";
 
-type ItemType = DepartmentType & {collection: WinCardType[]};
+type ItemType = DepartmentType & {collection: WinCardType[]; short: WinCardType[]};
 
 const {data, cards, related} = defineProps<{
   data: DepartmentType[],
@@ -21,7 +21,8 @@ const toast = useToast();
 
 const list = computed<ItemType[]>(() => data.map((el) => ({
   ...el,
-  collection: cards.filter((f) => f.person.department.id === el.id).slice(0, 3),
+  short: cards.filter((f) => f.person.department.id === el.id).slice(0, 3),
+  collection: cards.filter((f) => f.person.department.id === el.id),
 })))
 
 const activeGroup = ref<{index: number; data: ItemType}>();
@@ -85,7 +86,7 @@ const searchCollectionCount = (cc: WinCardType[]) => {
       <Card v-for="(d, index) in list" :key="d.id" class="cardsPage__card hover:shadow-2 shadow-6 transition-all transition-duration-300" @click="select(d, index)">
         <template #content>
           {{ d.title }}
-          <div v-for="card in d.collection" :key="card.person.uuid" class="cardsPage__c">
+          <div v-for="card in d.short" :key="card.person.uuid" class="cardsPage__c">
             <WinCard :index="index" :card="card" />
           </div>
 
