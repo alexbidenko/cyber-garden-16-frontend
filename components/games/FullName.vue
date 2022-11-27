@@ -57,13 +57,13 @@ watch(answers, () => {
 </script>
 
 <template>
-  <div class="p-8">
+  <div class="p-6">
+    <h2 class="text-center">Соберите полное имя</h2>
     <div class="mx-auto" style="max-width: 420px">
-      <h1>Соберите ФИО по фото</h1>
       <UserAvatar :user="correctUser" class="block mx-auto max-w-8rem mb-4" />
       <Chips :inputProps="{readonly: true}" class="w-full mb-6 block" v-model="answers" />
 
-      <div class="flex gap-3 flex-wrap">
+      <div class="flex gap-3 flex-wrap justify-content-center">
         <Button v-for="part in partList" :key="part" @click="selectPart(part)" class="p-button-rounded">
           {{ part }}
         </Button>

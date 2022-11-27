@@ -15,7 +15,6 @@ const {data: users} = await useAsyncData<UserType[]>('users', () => requestUsers
 
 const correctUser = computed(() => users.value![Math.floor(Math.random() * users.value!.length)]);
 const selectedUser = ref<UserType>();
-console.log(correctUser.value);
 
 const changeSelected = (user: UserType) => {
   if (correctUser.value.uuid === user.uuid) {
@@ -35,6 +34,7 @@ const changeSelected = (user: UserType) => {
 
 <template>
   <div v-if="users" class="excludingGame p-6 md:p-8 flex flex-column gap-3">
+    <h2 class="text-center">Выберите лишнее</h2>
     <Card v-for="user in users" class="excludingGame__card cursor-pointer hover:shadow-2 shadow-6 transition-all transition-duration-300" :class="{excludingGame__card_error: selectedUser?.uuid === user.uuid}" @click="changeSelected(user)">
       <template #content>
         <div class="flex gap-2 align-items-center">

@@ -51,7 +51,9 @@ const onBlur = (e: InputEvent, key: keyof Pick<UserType, 'firstName' | 'lastName
   const newValue = (e.target as HTMLInputElement).value;
   if (newValue && newValue !== store.user[key]) {
     store.user[key] = newValue as any;
-    saveUser();
+    setTimeout(() => {
+      saveUser();
+    });
   }
 };
 
@@ -139,6 +141,17 @@ const selectAvatar = (event: InputEvent) => {
                     name="email"
                     autocomplete="off"
                     :value="store.user.email"
+                  />
+                </label>
+                <label class="block w-full">
+                  Город
+                  <Input
+                    @blur="onBlur($event, 'city')"
+                    placeholder="Введите город"
+                    class="w-full p-inputtext-lg my-2"
+                    name="email"
+                    autocomplete="off"
+                    :value="store.user.city"
                   />
                 </label>
               </div>

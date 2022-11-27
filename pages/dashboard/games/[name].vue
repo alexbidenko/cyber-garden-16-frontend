@@ -21,6 +21,12 @@ watch(() => route.params.name, () => {
   store.tryCount = 0;
 });
 
+const spawn = () => {
+  request.post('collection/spawn_playcard/').then(() => {
+    store.loadBalance();
+  });
+}
+
 watch(() => store.state, () => {
   if (['fail', 'success'].includes(store.state)) {
     request.post('statistic/add_game_session/', {
@@ -35,10 +41,13 @@ watch(() => store.state, () => {
     })
   }
   if (store.state === 'success' && Math.random() > 0.5) {
-    request.post('collection/spawn_playcard/').then(() => {
-      store.loadBalance();
-    });
+    spawn();
   }
+});
+
+onMounted(() => {
+  // @ts-ignore
+  window.spawn = spawn;
 });
 </script>
 

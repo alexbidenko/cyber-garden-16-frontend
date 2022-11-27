@@ -14,8 +14,8 @@ const containerWidth = ref(0);
 
 const backgroundFront = computed(() => `url("/cards/card-${(index % 4) + 1}-front.png") center / cover`);
 const backgroundBack = computed(() => `url("/cards/card-${(index % 4) + 1}-back.png") center / cover`);
-const headerFontSize =  computed(() => `${containerWidth.value * 0.1}px`);
-const bodyFontSize =  computed(() => `${containerWidth.value * 0.06}px`);
+const headerFontSize =  computed(() => `${containerWidth.value * 0.09}px`);
+const bodyFontSize =  computed(() => `${containerWidth.value * 0.055}px`);
 const backFontSize =  computed(() => `${containerWidth.value * 0.1}px`);
 
 const onUpdate = () => {
@@ -57,7 +57,7 @@ onUnmounted(() => {
         :class="className"
       >
         <template #content>
-          <span class="winCard__back">{{ card.person.fact1 }}</span>
+          <span class="winCard__back px-2">{{ card.person.fact1 }}</span>
         </template>
       </Card>
     </div>
@@ -93,6 +93,7 @@ onUnmounted(() => {
     width: 100%;
     transform: translateX(-50%);
     font-size: v-bind(headerFontSize);
+    white-space: nowrap;
   }
 
   &__name {

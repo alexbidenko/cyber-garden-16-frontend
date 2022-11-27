@@ -24,7 +24,7 @@ onMounted(() => {
   <div>
     <Html lang="ru" />
     <Head>
-      <Title>Admire Знакомства</Title>
+      <Title>Admire Simpler</Title>
       <Link
         rel="icon"
         type="image/png"

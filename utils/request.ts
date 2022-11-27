@@ -1,7 +1,6 @@
 import {FetchOptions, FetchContext} from "ofetch";
 import {useCookie} from "#build/imports";
 import dns from 'node:dns';
-import {Ref} from "@vue/reactivity";
 import {CookieRef} from "#app";
 
 if (process.env.NODE_ENV === 'development' && process.server) {
@@ -76,32 +75,7 @@ export const initPlugin = (options: {baseURL: string}) => {
 };
 
 const request = <T>(url: string, options: FetchOptions): Promise<T> => (
-  $fetch<any>(url, {...initialOptions, ...options}).catch((error) => {
-    if (error.response?.status === 401) {
-      if (!refreshState.isRequest) {
-        refreshState.isRequest = true;
-        return $fetch('user/refresh', { method: 'POST' }).then(() => {
-          refreshState.subscribers.forEach((el) => el.resolve(true));
-          refreshState.subscribers = [];
-          return $fetch(url, {...initialOptions, ...options});
-        }).catch(() => {
-          refreshState.subscribers.forEach((el) => el.reject(error));
-          refreshState.subscribers = [];
-          return Promise.reject(error);
-        }).finally(() => {
-          refreshState.isRequest = false;
-        });
-      } else {
-        return new Promise((resolve, reject) => {
-          refreshState.subscribers.push({
-            resolve,
-            reject,
-          });
-        }).then(() => $fetch(url, {...initialOptions, ...options}));
-      }
-    }
-    return Promise.reject(error);
-  })
+  $fetch<any>(url, {...initialOptions, ...options})
 );
 
 const $request = {

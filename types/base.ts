@@ -18,7 +18,9 @@ export type UserType = {
   grade: string;
   specialization: string;
   fact1: string;
+  city: string;
   admin: boolean;
+  online: boolean;
   department: DepartmentType;
 };
 
@@ -33,6 +35,7 @@ export type ProductType = {
 export type WinCardType = {
   person: UserType;
   owner: UserType;
+  id: number;
 }
 
 export enum Games {

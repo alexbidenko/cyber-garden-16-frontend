@@ -43,7 +43,7 @@ const grade = computed(() => ({
           <span>{{user.patronymic}}</span>
         </div>
         <Divider />
-        <div class="flex justify-content-between">
+        <div class="flex justify-content-between" v-if="user.department">
           <span>Отдел</span>
           <span>{{user.department.title}}</span>
         </div>
@@ -56,6 +56,16 @@ const grade = computed(() => ({
         <div class="flex justify-content-between">
           <span>Email</span>
           <span>{{user.email}}</span>
+        </div>
+        <Divider />
+        <div class="flex justify-content-between">
+          <span>Город</span>
+          <span>{{user.city}}</span>
+        </div>
+        <Divider />
+        <div class="flex justify-content-between">
+          <span>Формат работы</span>
+          <span>{{user.online ? 'Удаленно' : 'В офисе'}}</span>
         </div>
       </template>
       <template #footer>

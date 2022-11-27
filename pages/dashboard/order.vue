@@ -7,10 +7,10 @@ console.log(products.value);
 </script>
 
 <template>
-  <div v-if="products" class="orderPage flex flex-column gap-2 align-items-center">
-    <Card style="width: 25em" v-for="item in products" :key="item.id" class="max-w-full">
+  <div v-if="products" class="orderPage flex flex-column gap-2 align-items-center p-3">
+    <Card style="width: 25em;border-radius: 12px" v-for="item in products" :key="item.id" class="max-w-full mb-3">
       <template #header>
-        <img :src="item.product.icons" style="height: 15rem" class="max-w-full" />
+        <img :src="item.product.icons" style="height: 15rem; border-radius: 12px" class="max-w-full" />
       </template>
       <template #title>
         {{item.product.title }}

@@ -29,15 +29,15 @@ const select = (value: ProductType) => {
 </script>
 
 <template>
-  <div class="max-w-30rem mx-auto">
+  <div class="max-w-30rem mx-auto px-3">
     <NuxtLink to="/dashboard/order">
       <Button class="p-button-lg w-full my-3 justify-content-center p-button-help py-4">Заказы</Button>
     </NuxtLink>
     <DataView :value="products" layout="list">
       <template #list="slotProps">
         <div class="col-12">
-          <div class="product-list-item">
-            <img :src="slotProps.data.icons" :alt="slotProps.data.name" style="width: 60%" />
+          <div class="product-list-item pb-4 px-4">
+            <img :src="slotProps.data.icons" :alt="slotProps.data.name" style="width: 80%" class="my-4" />
             <div class="product-list-detail">
               <div class="product-name">{{slotProps.data.title}}</div>
             </div>
@@ -97,7 +97,6 @@ const select = (value: ProductType) => {
   img {
     width: 50px;
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
-    margin-right: 2rem;
   }
 
   .product-list-detail {
@@ -138,7 +137,6 @@ const select = (value: ProductType) => {
 
   img {
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
-    margin: 2rem 0;
   }
 
   .product-grid-item-content {
@@ -155,10 +153,6 @@ const select = (value: ProductType) => {
   .product-list-item {
     flex-direction: column;
     align-items: center;
-
-    img {
-      margin: 2rem 0;
-    }
 
     .product-list-detail {
       text-align: center;

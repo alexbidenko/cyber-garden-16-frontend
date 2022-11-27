@@ -1,14 +1,23 @@
 <script lang="ts" setup>
 import {DepartmentType, WinCardType} from "~/types/base";
-import {computed, onMounted, onUnmounted, ref} from "#imports";
+import {computed, onMounted, onUnmounted, ref, request, useRoute} from "#imports";
 import WinCard from "~/components/ui/WinCard.vue";
+import {useGameStore} from "~/store/game";
+import {useConfirm} from "primevue/useconfirm";
+import {useToast} from "primevue/usetoast";
 
 type ItemType = DepartmentType & {collection: WinCardType[]};
 
-const {data, cards} = defineProps<{
+const {data, cards, related} = defineProps<{
   data: DepartmentType[],
   cards: WinCardType[];
+  related?: boolean;
 }>();
+
+const route = useRoute();
+const store = useGameStore();
+const confirm = useConfirm();
+const toast = useToast();
 
 const list = computed<ItemType[]>(() => data.map((el) => ({
   ...el,
@@ -36,6 +45,23 @@ const activeCount = computed(() => {
 const onResize = () => {
   screenWidth.value = window.innerWidth;
   console.log(activeCount.value);
+};
+
+const onBarter = (card: WinCardType) => {
+  confirm.require({
+    header: "Подтверждение обмена",
+    message: 'Вы уверены, что хотите обменять товар?',
+    icon: 'pi pi-shopping-cart',
+    acceptLabel: 'Да',
+    rejectLabel: 'Нет',
+    accept: () => {
+      request.post('collection/request_trade/', {"user2": route.params.id, "offered_cards": [card.id],  "requested_cards": [store.barterCard!.id]}).then(() => {
+        toast.add({severity: 'success', summary: 'Запрос на обмен отправлен', detail: 'Ожидайте ответа пользователя', life: 3000})
+      }).finally(() => {
+        store.barterCard = undefined;
+      });
+    },
+  });
 };
 
 onMounted(() => {
@@ -66,6 +92,8 @@ onUnmounted(() => {
         <template #item="slotProps">
           <div class="px-2">
             <WinCard :card="slotProps.data" :index="activeGroup?.index" />
+            <Button v-if="related" class="mt-3 w-full justify-content-center" @click="store.barterCard = slotProps.data">Обменять</Button>
+            <Button v-else-if="store.barterCard" class="mt-3 w-full justify-content-center" @click="onBarter(slotProps.data)">Отдать</Button>
           </div>
         </template>
       </Carousel>

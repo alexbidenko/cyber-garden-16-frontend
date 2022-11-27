@@ -16,6 +16,7 @@ import Dropdown from 'primevue/dropdown';
 import Image from 'primevue/image';
 import InputSwitch from 'primevue/inputswitch';
 import Input from 'primevue/inputtext';
+import Slider from 'primevue/slider';
 import Knob from 'primevue/knob';
 import Menu from 'primevue/menu';
 import Message from 'primevue/message';
@@ -59,6 +60,7 @@ export default defineNuxtPlugin((nuxtApp) => {
   nuxtApp.vueApp.component('Rating', Rating);
   nuxtApp.vueApp.component('Input', Input);
   nuxtApp.vueApp.component('Password', Password);
+  nuxtApp.vueApp.component('Slider', Slider);
   nuxtApp.vueApp.component('Divider', Divider);
   nuxtApp.vueApp.component('ScrollTop', ScrollTop);
   nuxtApp.vueApp.component('DataView', DataView);

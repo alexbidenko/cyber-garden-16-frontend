@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import {combineFullName, nextTick, ref, requestUsers, useAsyncData, watch} from "#imports";
+import {combineFullName, nextTick, ref, requestUsers, useAsyncData, useState, watch} from "#imports";
 import {UserType} from "~/types/base";
 import shuffle from "~/utils/shuffle";
 import UserAvatar from "~/components/ui/UserAvatar.vue";
@@ -8,21 +8,33 @@ import {useGameStore} from "~/store/game";
 type FieldType = {
   uuid: string;
   userId: string;
-  key: number;
+  key: string;
   value: string;
 }
 
 const store = useGameStore();
 
+const type = useState(`type_${store.key}`, () => ['department', 'location'][Math.floor(Math.random() * 2)])
+
 const {data: users, error} = await useAsyncData<UserType[]>('users', () => requestUsers({
-  not_empty: ['firstName', 'lastName', 'patronymic', 'avatar', 'department'],
+  not_empty: ['firstName', 'lastName', 'patronymic', 'avatar'].concat(type.value === 'department' ? ['department'] : ['city', 'online']) as (keyof UserType)[],
   order: 'random',
   introduced: 3,
   not_introduced: 3,
 }));
 
-const leftFields = ref<FieldType[]>(shuffle(users.value!.map((el) => ({ uuid: `left_${el.uuid}`, userId: el.uuid, key: el.department.id, value: combineFullName(el) }))));
-const rightFields = ref<FieldType[]>(shuffle(users.value!.map((el) => ({ uuid: `right_${el.uuid}`, userId: el.uuid, key: el.department.id, value: el.specialization }))));
+const leftFields = ref<FieldType[]>(shuffle(users.value!.map((el) => ({
+  uuid: `left_${el.uuid}`,
+  userId: el.uuid,
+  key: type.value === 'department' ? el.department.id.toString() : `${el.online}_${el.city}`,
+  value: combineFullName(el),
+}))));
+const rightFields = ref<FieldType[]>(shuffle(users.value!.map((el) => ({
+  uuid: `right_${el.uuid}`,
+  userId: el.uuid,
+  key: type.value === 'department' ? el.department.id.toString() : `${el.online}_${el.city}`,
+  value: type.value === 'department' ? el.specialization : `${el.city} (${el.online ? 'удаленно' : 'офис'})`,
+}))));
 
 const selectedField = ref<FieldType>();
 const errorFields = ref<[string, string]>();
@@ -56,6 +68,7 @@ watch(leftFields, () => {
 
 <template>
   <div class="p-3 md:p-6 mappingGame">
+    <h2 class="text-center">Выберите соотношения</h2>
     <div class="flex gap-4 md:gap-6 mx-auto w-fit">
       <client-only>
         <div class="lightListTransition flex flex-column gap-3 md:gap-6">

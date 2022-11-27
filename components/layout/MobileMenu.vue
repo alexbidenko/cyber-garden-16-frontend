@@ -56,6 +56,10 @@ const MOBILE_MENU: MainMenuItem[] = [
     label: 'Потрать свои баллы',
     to: '/dashboard/products',
   },
+  {
+    label: 'Предложения обменов',
+    to: '/dashboard/barter',
+  },
 ];
 const isMoved = ref(false);
 const showMenu = ref(false);

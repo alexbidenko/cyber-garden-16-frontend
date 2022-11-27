@@ -62,6 +62,20 @@
         </template>
       </Card>
     </NuxtLink>
+
+    <NuxtLink to="/dashboard/barter">
+      <Card class="dashboardPage__linkCard dashboardPage__linkCard_3 hover:shadow-2 shadow-6 transition-all transition-duration-300">
+        <template #content>
+          <div class="flex justify-content-between align-items-center dashboardPage__link">
+            <img src="/icons/dashboard-icon-5.svg" />
+            <span>
+              Предложения обмена
+            </span>
+            <img src="/icons/dashboard-icon-5.svg" />
+          </div>
+        </template>
+      </Card>
+    </NuxtLink>
 <!--    <NuxtLink to="/dashboard/admin">-->
 <!--      <Card class="hover:shadow-2 shadow-6 transition-all transition-duration-300">-->
 <!--        <template #content>-->
@@ -91,6 +105,10 @@
 
     &_2 {
       background-color: #B7A2E0;
+    }
+
+    &_3 {
+      background-color: #FFD24B;
     }
   }
 
